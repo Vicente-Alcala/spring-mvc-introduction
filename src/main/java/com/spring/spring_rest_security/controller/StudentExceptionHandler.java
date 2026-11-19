@@ -1,15 +1,14 @@
-package com.spring.spring_rest_security.exception;
+package com.spring.spring_rest_security.controller;
 
+import com.spring.spring_rest_security.entity.StudentErrorResponse;
+import com.spring.spring_rest_security.exception.StudentNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import com.spring.spring_rest_security.entity.StudentErrorResponse;
 
 /**
  * Global exception handler for intercepting
