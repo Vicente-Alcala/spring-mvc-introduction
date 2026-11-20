@@ -1,20 +1,6 @@
 
 package com.spring.spring_mvc.controller;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.spring.spring_mvc.dto.AuthLoginDto;
 import com.spring.spring_mvc.dto.AuthRoleRegisterDto;
 import com.spring.spring_mvc.dto.AuthUserRegisterDto;
@@ -22,12 +8,22 @@ import com.spring.spring_mvc.entity.Auth_Role;
 import com.spring.spring_mvc.entity.Auth_User;
 import com.spring.spring_mvc.repository.AuthRoleRepository;
 import com.spring.spring_mvc.repository.AuthUserRepository;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * REST controller handling authentication and authorization operations,
@@ -47,16 +43,16 @@ public class AuthenticationController {
      * with the required dependencies.
      *
      * @param authenticationManager
-     *                              the manager used to authenticate user
-     *                              credentials
+     * the manager used to authenticate user
+     * credentials
      * @param authUserRepo
-     *                              the repository for accessing and persisting user
-     *                              entities
+     * the repository for accessing and persisting user
+     * entities
      * @param authRoleRepo
-     *                              the repository for accessing and persisting role
-     *                              entities
+     * the repository for accessing and persisting role
+     * entities
      * @param passwordEncoder
-     *                              the encoder used to hash user passwords
+     * the encoder used to hash user passwords
      */
     public AuthenticationController(
             AuthenticationManager authenticationManager,
@@ -153,7 +149,8 @@ public class AuthenticationController {
         System.out.println("Username: " + authLoginDto.getUsername());
         System.out.println("Password: " + authLoginDto.getPassword());
         Authentication authenticate = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authLoginDto.getUsername(),
+                new UsernamePasswordAuthenticationToken(
+                        authLoginDto.getUsername(),
                         authLoginDto.getPassword()));
         System.out.println("2 Username: " + authLoginDto.getUsername());
         System.out.println("2 Password: " + authLoginDto.getPassword());
@@ -163,22 +160,49 @@ public class AuthenticationController {
         return new ResponseEntity<>("Sign in successfully!", HttpStatus.OK);
     }
 
+    /**
+     * Authenticates a user using their username
+     * and password and establishes an HTTP session
+     * upon successful authentication.
+     *
+     * @param authLoginDto the DTO containing
+     *                     the user's login credentials
+     * @param request      the HTTP request used to
+     *                     create or retrieve the session
+     * @return a {@link ResponseEntity} with HTTP 200
+     *         OK upon successful authentication
+     */
     @PostMapping("/auth_login_session")
-    public ResponseEntity<?> loginWithSession(@RequestBody AuthLoginDto authLoginDto, HttpServletRequest request) {
+    public ResponseEntity<?> loginWithSession(
+        @RequestBody AuthLoginDto authLoginDto,
+        HttpServletRequest request) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authLoginDto.getUsername(),
-                                                        authLoginDto.getPassword())
+                new UsernamePasswordAuthenticationToken(
+                    authLoginDto.getUsername(),
+                    authLoginDto.getPassword())
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         HttpSession session = request.getSession(true);
-        session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+        session.setAttribute("SPRING_SECURITY_CONTEXT",
+        SecurityContextHolder.getContext());
 
         Map<String, String> response = new HashMap<>();
-        response.put("message", "Authenticated successfully via session cookie.");
+        response.put("message",
+        "Authenticated successfully via session cookie.");
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Logs out the currently authenticated user by
+     * invalidating their HTTP session and clearing
+     * the security context.
+     *
+     * @param request the HTTP request used to
+     *                retrieve the existing session
+     * @return a {@link ResponseEntity} with HTTP 401
+     *         Unauthorized after logout
+     */
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);

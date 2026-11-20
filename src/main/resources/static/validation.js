@@ -1,3 +1,12 @@
+/**
+ * Validates the student form fields by checking
+ * required values, minimum character lengths,
+ * and email address format.
+ *
+ * @returns {boolean} True if all form fields pass
+ *                    validation; otherwise, false
+ */
+
 function validateStudentForm() {
     let isValid = true;
 
@@ -17,7 +26,8 @@ function validateStudentForm() {
         firstName.classList.add("invalid");
         isValid = false;
     } else if (firstName.value.trim().length < 2) {
-        firstNameError.textContent = "First name must be at least 2 characters long.";
+        firstNameError.textContent = 
+        "First name must be at least 2 characters long.";
         lastName.classList.add("invalid");
         isValid = false;
     }
@@ -28,7 +38,8 @@ function validateStudentForm() {
         lastName.classList.add("invalid");
         isValid = false;
     } else if (lastName.value.trim().length < 2) {
-        lastNameError.textContent = "Last name must be at least 2 characters long.";
+        lastNameError.textContent = 
+        "Last name must be at least 2 characters long.";
         lastName.classList.add("invalid");
         isValid = false;
     }
@@ -42,7 +53,8 @@ function validateStudentForm() {
         email.classList.add("invalid");
         isValid = false;
     } else if (!emailRegex.test(emailValue)) {
-        emailError.textContent = "Please enter a valid email address (e.g., student@example.com).";
+        emailError.textContent = 
+        "Please enter a valid email address (e.g., student@example.com).";
         email.classList.add("invalid");
         isValid = false;
     }
@@ -50,6 +62,12 @@ function validateStudentForm() {
     return isValid;
 }
 
+/**
+ * Removes validation error messages and invalid
+ * styling from all student form fields.
+ *
+ * @returns {void}
+ */
 function clearValidationStyles() {
     const fields = ["firstName", "lastName", "email"];
     fields.forEach(fieldId => {

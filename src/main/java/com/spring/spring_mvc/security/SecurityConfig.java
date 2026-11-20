@@ -2,9 +2,7 @@
 package com.spring.spring_mvc.security;
 
 import com.spring.spring_mvc.service.CustomUserDetailsService;
-
 import java.util.Arrays;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -80,12 +78,18 @@ public class SecurityConfig {
                 .cors(cors -> cors.configure(security))
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
-                                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                                        .sessionCreationPolicy(
+                                            SessionCreationPolicy.IF_REQUIRED)
                                     )
                 .authorizeHttpRequests(auth -> auth
-                                        .requestMatchers("/api/auth/**").permitAll()
-                                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                                        .requestMatchers("/api/students/**").hasAnyAuthority("USER", "ADMIN")
+                                        .requestMatchers(
+                                            "/api/auth/**").permitAll()
+                                        .requestMatchers(
+                                            HttpMethod.OPTIONS, "/**")
+                                            .permitAll()
+                                        .requestMatchers(
+                                            "/api/students/**")
+                                            .hasAnyAuthority("USER", "ADMIN")
                                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .build();
@@ -118,22 +122,29 @@ public class SecurityConfig {
         return authentication.getAuthenticationManager();
     }
 
+    /**
+     * Configures the Cross-Origin Resource Sharing (CORS)
+     * settings to allow requests from the specified
+     * frontend origins, HTTP methods, and headers.
+     *
+     * @return a {@link CorsConfigurationSource} containing
+     *         the configured CORS policies
+     */
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000",
-                                                            "http://127.0.0.1:3000"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST",
-                                                            "PUT", "PATCH",
-                                                            "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization",
-                                                            "Cache-Control",
-                                                            "Content-Type"));
+        configuration.setAllowedOrigins(
+            Arrays.asList("http://localhost:3000", "http://127.0.0.1:3000"));
+        configuration.setAllowedMethods(
+            Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(
+            Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
 
         configuration.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        UrlBasedCorsConfigurationSource source = 
+        new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
