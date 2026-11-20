@@ -1,4 +1,5 @@
 const API_URL = "http://localhost:8080/api/students";
+const API_AUTH = "http://localhost:8080/api/auth"
 
 // create a student
 async function createStudent(studentData) {
@@ -6,7 +7,8 @@ async function createStudent(studentData) {
         const response = await fetch(API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(studentData)
+            body: JSON.stringify(studentData),
+            credentials: "include"
         });
 
         if (response.ok) {
@@ -33,7 +35,11 @@ document.getElementById("studentForm").addEventListener("submit", function(e) {
         lastName: document.getElementById("lastName").value.trim(),
         email: document.getElementById("email").value.trim()
     };
-    createStudent(studentData);
+    if(id) {
+        updateStudent(id, studentData);
+    } else {
+        createStudent(studentData);
+    }
 });
 
 //Helper function to reset form state
@@ -48,7 +54,10 @@ function resetForm() {
 
 async function getAllStudents() {
     try {
-        const response = await fetch(API_URL);
+        //const response = await fetch(API_URL);
+        const response = await fetch(`${API_URL}`, {
+            credentials: "include"
+        });
         if (!response.ok) throw new Error("Network response was not ok");
 
         const students = await response.json();
@@ -77,3 +86,119 @@ async function getAllStudents() {
 }
 
 document.addEventListener("DOMContentLoaded", getAllStudents);
+
+async function initializeStudentFormById(id) {
+    try {
+        const response = await fetch(`${API_URL}/${id}`, {
+            credentials: "include"
+        });
+
+        if (!response.ok) throw new Error("Could not fetch student details");
+
+        const student = await response.json();
+
+        document.getElementById("studentId").value = student.id;
+        document.getElementById("firstName").value = student.firstName;
+        document.getElementById("lastName").value = student.lastName;
+        document.getElementById("email").value = student.email;
+
+        // button changes when edit button is triggered
+        const submitBtn = document.getElementById("submitBtn");
+        submitBtn.textContent = "Update";
+        submitBtn.style.backgroundColor = "#007bff";
+
+        // clear old error highlights when loading data into form
+        clearValidationStyles();
+    } catch (error) {
+        console.error("Error fetching student details:", error);
+    }
+}
+
+async function updateStudent(id, studentData) {
+    try {
+        const response = await fetch(`${API_URL}/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(studentData),
+            credentials: "include"
+        });
+
+        if (response.ok) {
+            alert("Student updated successfully!");
+            resetForm();
+            getAllStudents();
+        } else {
+            alert("Error updating student.");
+        } 
+    } catch (error) {
+        console.error("Error updating student:", error);
+    }
+}
+
+async function deleteStudent(id) {
+    if (confirm("Are you sure you want to delete this student?")) {
+        try {
+            const response = await fetch(`${API_URL}/${id}`, {
+                method: "DELETE",
+                credentials: "include"
+            });
+
+            if (response.ok) {
+                const message = await response.text();
+                alert(message);
+                getAllStudents();
+            } else {
+                alert("Error deleting student.");
+            }
+        } catch (error) {
+            console.error("Error deleting student:", error);
+        }
+    }
+}
+
+async function loginUser(loginDto) {
+    try {
+        const response = await fetch(`${API_AUTH}/auth_login_session`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json"},
+            body: JSON.stringify(loginDto),
+            credentials: "include"
+        });
+
+        if (response.ok) {
+            alert("Login successful!");
+            window.location.href = "index.html";
+        } else {
+            alert("Invalid credentials.");
+        }
+    } catch (error) {
+        console.error("Login error", error);
+    }
+}
+
+async function logoutUser() {
+    try {
+        await fetch(`${API_AUTH}/logout`, {
+            method: "POST",
+            credentials: "include",
+        });
+        document.getElementById("studentTableBody").innerHTML = "";
+        resetForm();
+        alert("Logged out successfully!");
+
+        try {
+            await fetch(API_URL, {
+                method: "GET",
+                headers: {
+                    "Authorization": "Basic " + btoa("invalid_user:wrong_password")
+                }
+            });
+        } catch (error) {
+            console.log("Browser credential cache cleared.");
+        }
+        window.location.reload();
+
+    } catch (e) {
+        console.error("Logout transmission crash:", e);
+    }
+}
