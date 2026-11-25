@@ -31,6 +31,15 @@ public class Student {
     public Student() {
     }
 
+    /**
+     * Creates a student record with the specified ID,
+     * first name, last name, and email address.
+     *
+     * @param id the unique identifier of the student
+     * @param firstName the first name of the student
+     * @param lastName the last name of the student
+     * @param email the email address of the student
+     */
     public Student(Long id, String firstName, String lastName, String email) {
         this.id = id;
         this.firstName = firstName;

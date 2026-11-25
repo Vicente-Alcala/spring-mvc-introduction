@@ -25,6 +25,12 @@ public class Auth_Role {
     public Auth_Role() {
     }
     
+    /**
+     * Creates an authorization role with the specified ID and name.
+     *
+     * @param id the unique identifier of the authorization role
+     * @param name the name of the authorization role
+     */
     public Auth_Role(Long id, String name) {
         this.id = id;
         this.name = name;

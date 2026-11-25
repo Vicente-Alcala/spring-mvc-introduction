@@ -43,6 +43,15 @@ public class Auth_User {
     public Auth_User() {
     }
 
+    /**
+     * Creates an authenticated user with the specified ID,
+     * username, password, and assigned roles.
+     *
+     * @param id the unique identifier of the authenticated user
+     * @param username the username of the authenticated user
+     * @param password the password of the authenticated user
+     * @param roles the list of authorization roles assigned to the user
+     */
     public Auth_User(
         Long id,
         String username,
